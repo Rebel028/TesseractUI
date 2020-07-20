@@ -5,26 +5,56 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesseractUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1200">
+        Title="Tesseract UI" Height="600" Width="1200">
+
     <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="InitialImageColumn" Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition x:Name="ResultImageColumn" Width="*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition x:Name="ToolbarColumn" Width="200"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Image Grid.Column="0" x:Name="MainImage"></Image>
+        
+        
+        <Grid x:Name="TextAndImages" Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="InitialImageColumn" Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition x:Name="ResultImageColumn" Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="ImagesRow"></RowDefinition>
+                <RowDefinition x:Name="SplitterRow" Height="Auto"></RowDefinition>
+                <RowDefinition x:Name="TextRow" Height="150"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Image Grid.Column="0" Grid.Row="0" x:Name="MainImage"></Image>
+            <GridSplitter Grid.Column="1" Grid.Row="0"  ShowsPreview="False" Width="3"
+                          HorizontalAlignment="Center" VerticalAlignment="Stretch"></GridSplitter>
+            <Image Grid.Column="2" Grid.Row="0" x:Name="ResultImage"></Image>
+            <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Height="3"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <ScrollViewer Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="0">
+                <TextBlock x:Name="DecodedText" TextWrapping="Wrap" Margin="20"></TextBlock>
+            </ScrollViewer>
+        </Grid>
+        
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch"></GridSplitter>
-        <Image Grid.Column="2" x:Name="ResultImage"></Image>
-        <GridSplitter Grid.Column="3" ShowsPreview="False" Width="3"
-                      HorizontalAlignment="Center" VerticalAlignment="Stretch"></GridSplitter>
-        <Grid Name="ToolbarGrid" Column="4">
-            <StackPanel>
-                <Button Name="Test" Content="test"></Button>
-                <Button Name="Test2" Content="test2"></Button>
+        
+        <Grid Name="ToolbarGrid" Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="SelectButtonRow" Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto" ></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <Button x:Name="SelectButton" Click="SelectButton_OnClick" Margin="10,10,10,15" Height="50"
+                        FontFamily="Arial Black" FontSize="18"
+                        Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Select</Button>
+                <TextBox x:Name="FileName" Margin="10" IsReadOnly="True"></TextBox>
             </StackPanel>
+            <Button Grid.Row="2"  Name="RecognizeButton" Click="RecognizeButton_OnClick" Margin="10,10,10,15" Height="50"
+                    FontFamily="Arial Black" FontSize="18"
+                    Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Recognize</Button>
         </Grid>
     </Grid>
 </Window>

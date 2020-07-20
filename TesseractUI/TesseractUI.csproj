@@ -4,10 +4,22 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <UseWPF>true</UseWPF>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Tesseract" Version="4.1.0-beta1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="tessdata\rus.traineddata" />
+      <Content Include="tessdata\rus.traineddata">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="tessdata\eng.traineddata" />
+      <Content Include="tessdata\eng.traineddata">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
