@@ -20,6 +20,10 @@
       <Content Include="tessdata\eng.traineddata">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="tesseract.ico" />
+      <Content Include="tesseract.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

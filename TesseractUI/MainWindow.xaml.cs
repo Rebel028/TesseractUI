@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Tesseract;
+using TesseractUI.Models;
 using Page =Tesseract.Page;
 using Path = System.IO.Path;
 
@@ -15,7 +19,7 @@ namespace TesseractUI
     public partial class MainWindow : Window
     {
         public string FilePath { get; set; }
-        private const string TEMP_FILE_NAME = "temp.png";
+        public string ResultPath = TessEngineWrapper.RESULT_FILE_NAME;
         
         public MainWindow()
         {
@@ -34,9 +38,20 @@ namespace TesseractUI
             {
                 this.FilePath = openFileDialog.FileName;
                 FileName.Text = this.FilePath;
-                MainImage.Source = new BitmapImage(new Uri(this.FilePath));
-                ResultImage.Source = null;
-                DecodedText.Text = "";
+                MainImage.Source = BitmapFromUri(new Uri(this.FilePath));
+                ClearOldValues();
+            }
+        }
+
+        private void ClearOldValues()
+        {
+            Console.WriteLine("ClearOldValues");
+            ClearMeanConfidence();
+            DecodedText.Text = "";
+            ResultImage.Source = null;
+            if (File.Exists(TessEngineWrapper.RESULT_FILE_NAME))
+            {
+                File.Delete(TessEngineWrapper.RESULT_FILE_NAME);
             }
         }
 
@@ -45,97 +60,40 @@ namespace TesseractUI
             if (!string.IsNullOrEmpty(this.FilePath))
             {
                 // Console.WriteLine(string.Join("\r\n", Directory.EnumerateFiles("./")));
-                using (TesseractEngine engine = new TesseractEngine(@"./tessdata", "rus", EngineMode.LstmOnly))
+                using (TesseractEngine engine = new TesseractEngine(@"./tessdata", "rus", EngineMode.TesseractAndLstm))
                 {
-                    ReadFile(this.FilePath, engine);
+                    IRecognitionResult result = TessEngineWrapper.ReadFile(this.FilePath, engine);
+
+                    SetMeanConfidence(result.MeanConfidence);
+                    DecodedText.Text = result.Text;
+                    ResultImage.Source = BitmapFromUri(new Uri(Path.GetFullPath(TessEngineWrapper.RESULT_FILE_NAME)));
                 }
             }
+        }
+
+        private void SetMeanConfidence(float meanConf)
+        {
+            var color = Color.FromArgb(100, (byte) (255 * (1 - meanConf)), (byte) (255 * meanConf), 0);
+            MeanConfidence.Text = meanConf.ToString(CultureInfo.InvariantCulture);
+            MeanConfidence.Background = new SolidColorBrush(color);
+        }
+
+        private void ClearMeanConfidence()
+        {
+            MeanConfidence.Text = "";
+            MeanConfidence.Background = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
         }
         
-        private void ReadFile(string file, TesseractEngine engine)
+        public static ImageSource BitmapFromUri(Uri source)
         {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-
-            Pix img = null;
-
-            try
-            {
-                img = Pix.LoadFromFile(file);
-                img = img.ConvertRGBToGray();
-                img = img.Deskew(out Scew skew);
-
-                
-                img.Save(TEMP_FILE_NAME, ImageFormat.Default);
-                
-                using (Page page = engine.Process(img))
-                {
-                    string text = page.GetText();
-                    DecodedText.Text = $"Mean confidence: {page.GetMeanConfidence()}\r\n" +
-                                       $"Text: {text}";
-                    ResultImage.Source = new BitmapImage(new Uri(Path.GetFullPath(TEMP_FILE_NAME)));
-#if USE_ITER
-                            IterateBlocks(page);
-#endif
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            finally
-            {
-                timer.Stop();
-                Console.WriteLine("Processing time: " + timer.Elapsed);
-                if (img!=null && !img.IsDisposed)
-                {
-                    img.Dispose();
-                }
-            }
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = source;
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            return bitmap;
         }
-
-        private static void IterateBlocks(Page page)
-        {
-            Console.WriteLine("Text (iterator):");
-
-            using (ResultIterator iter = page.GetIterator())
-            {
-                iter.Begin();
-
-                do
-                {
-                    do
-                    {
-                        do
-                        {
-                            do
-                            {
-                                if (iter.IsAtBeginningOf(PageIteratorLevel.Block))
-                                {
-                                    Console.WriteLine("<BLOCK>");
-                                }
-
-                                Console.Write(iter.GetText(PageIteratorLevel.Word));
-                                Console.Write(" ");
-
-                                if (iter.IsAtFinalOf(PageIteratorLevel.TextLine, PageIteratorLevel.Word))
-                                {
-                                    Console.WriteLine();
-                                }
-                            }
-                            while (iter.Next(PageIteratorLevel.TextLine, PageIteratorLevel.Word));
-
-                            if (iter.IsAtFinalOf(PageIteratorLevel.Para, PageIteratorLevel.TextLine))
-                            {
-                                Console.WriteLine();
-                            }
-                        }
-                        while (iter.Next(PageIteratorLevel.Para, PageIteratorLevel.TextLine));
-                    }
-                    while (iter.Next(PageIteratorLevel.Block, PageIteratorLevel.Para));
-                }
-                while (iter.Next(PageIteratorLevel.Block));
-            }
-        }
+        
     }
 }

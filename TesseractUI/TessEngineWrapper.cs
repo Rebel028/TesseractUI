@@ -1,0 +1,106 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Media.Imaging;
+using Tesseract;
+using TesseractUI.Models;
+
+namespace TesseractUI
+{
+    public class TessEngineWrapper
+    {
+        public const string RESULT_FILE_NAME = "temp.png";
+        
+        public static IRecognitionResult ReadFile(string file, TesseractEngine engine)
+        {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
+            Pix img = null;
+
+            try
+            {
+                img = Pix.LoadFromFile(file);
+                img = img.ConvertRGBToGray();
+                img = img.Deskew(out Scew skew);
+
+                if (File.Exists(RESULT_FILE_NAME))
+                {
+                    File.Delete(RESULT_FILE_NAME);
+                }
+                img.Save(RESULT_FILE_NAME, ImageFormat.Default);
+                
+                using (Page page = engine.Process(img))
+                {
+                    string text = page.GetText();
+                    float meanConf = page.GetMeanConfidence();
+                    return new SimpleRecognitionResult(text, meanConf);
+
+#if USE_ITER
+                            IterateBlocks(page);
+#endif
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new ErrorResult(e);
+            }
+            finally
+            {
+                timer.Stop();
+                Console.WriteLine("Processing time: " + timer.Elapsed);
+                bool imageIsNotDisposed = img!=null && !img.IsDisposed;
+                Console.WriteLine("imageIsNotDisposed " + imageIsNotDisposed);
+                if (imageIsNotDisposed)
+                {
+                    img.Dispose();
+                }
+            }
+        }
+        
+        private static void IterateBlocks(Page page)
+        {
+            Console.WriteLine("Text (iterator):");
+
+            using (ResultIterator iter = page.GetIterator())
+            {
+                iter.Begin();
+
+                do
+                {
+                    do
+                    {
+                        do
+                        {
+                            do
+                            {
+                                if (iter.IsAtBeginningOf(PageIteratorLevel.Block))
+                                {
+                                    Console.WriteLine("<BLOCK>");
+                                }
+
+                                Console.Write(iter.GetText(PageIteratorLevel.Word));
+                                Console.Write(" ");
+
+                                if (iter.IsAtFinalOf(PageIteratorLevel.TextLine, PageIteratorLevel.Word))
+                                {
+                                    Console.WriteLine();
+                                }
+                            }
+                            while (iter.Next(PageIteratorLevel.TextLine, PageIteratorLevel.Word));
+
+                            if (iter.IsAtFinalOf(PageIteratorLevel.Para, PageIteratorLevel.TextLine))
+                            {
+                                Console.WriteLine();
+                            }
+                        }
+                        while (iter.Next(PageIteratorLevel.Para, PageIteratorLevel.TextLine));
+                    }
+                    while (iter.Next(PageIteratorLevel.Block, PageIteratorLevel.Para));
+                }
+                while (iter.Next(PageIteratorLevel.Block));
+            }
+        }
+    }
+}
