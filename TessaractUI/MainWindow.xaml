@@ -5,8 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TessaractUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+        Title="MainWindow" Height="600" Width="1200">
+    <Grid Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="InitialImageColumn" Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition x:Name="ResultImageColumn" Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition x:Name="ToolbarColumn" Width="200"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Image Grid.Column="0" x:Name="MainImage"></Image>
+        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch"></GridSplitter>
+        <Image Grid.Column="2" x:Name="ResultImage"></Image>
+        <GridSplitter Grid.Column="3" ShowsPreview="False" Width="3"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch"></GridSplitter>
+        <Grid Name="ToolbarGrid" Column="4">
+            <StackPanel>
+                <Button Name="Test" Content="test"></Button>
+                <Button Name="Test2" Content="test2"></Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
