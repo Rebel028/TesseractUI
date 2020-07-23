@@ -29,9 +29,11 @@
             </Grid.RowDefinitions>
             
             <Image Grid.Column="0" Grid.Row="0" x:Name="MainImage"></Image>
+            <TextBlock Grid.Column="0" Grid.Row="0" x:Name="MainImageSize"></TextBlock>
             <GridSplitter Grid.Column="1" Grid.Row="0"  ShowsPreview="False" Width="3"
                           HorizontalAlignment="Center" VerticalAlignment="Stretch"></GridSplitter>
             <Image Grid.Column="2" Grid.Row="0" x:Name="ResultImage"></Image>
+            <TextBlock Grid.Column="2" Grid.Row="0">Test2</TextBlock>
             <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Height="3"
                           HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             

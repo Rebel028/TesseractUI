@@ -7,20 +7,18 @@ using TesseractUI.Models;
 
 namespace TesseractUI
 {
-    public class TessEngineWrapper
+    public static class TessEngineWrapper
     {
         public const string RESULT_FILE_NAME = "temp.png";
         
-        public static IRecognitionResult ReadFile(string file, TesseractEngine engine)
+        
+        public static IRecognitionResult ReadFile(Pix img, TesseractEngine engine)
         {
             Stopwatch timer = new Stopwatch();
             timer.Start();
-
-            Pix img = null;
-
+            
             try
             {
-                img = Pix.LoadFromFile(file);
                 img = img.ConvertRGBToGray();
                 img = img.Deskew(out Scew skew);
 
@@ -35,10 +33,6 @@ namespace TesseractUI
                     string text = page.GetText();
                     float meanConf = page.GetMeanConfidence();
                     return new SimpleRecognitionResult(text, meanConf);
-
-#if USE_ITER
-                            IterateBlocks(page);
-#endif
                 }
             }
             catch (Exception e)

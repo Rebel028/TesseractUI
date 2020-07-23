@@ -62,7 +62,9 @@ namespace TesseractUI
                 // Console.WriteLine(string.Join("\r\n", Directory.EnumerateFiles("./")));
                 using (TesseractEngine engine = new TesseractEngine(@"./tessdata", "rus", EngineMode.TesseractAndLstm))
                 {
-                    IRecognitionResult result = TessEngineWrapper.ReadFile(this.FilePath, engine);
+                    Pix pix = Pix.LoadFromFile(this.FilePath);
+                    SetMainImageSize(pix);
+                    IRecognitionResult result = TessEngineWrapper.ReadFile(pix, engine);
 
                     SetMeanConfidence(result.MeanConfidence);
                     DecodedText.Text = result.Text;
@@ -71,9 +73,15 @@ namespace TesseractUI
             }
         }
 
+        private void SetMainImageSize(Pix pix)
+        {
+            string picSize = pix.Height + "x" + pix.Width;
+            MainImageSize.Text = picSize;
+        }
+
         private void SetMeanConfidence(float meanConf)
         {
-            var color = Color.FromArgb(100, (byte) (255 * (1 - meanConf)), (byte) (255 * meanConf), 0);
+            Color color = Color.FromArgb(100, (byte) (255 * (1 - meanConf)), (byte) (255 * meanConf), 0);
             MeanConfidence.Text = meanConf.ToString(CultureInfo.InvariantCulture);
             MeanConfidence.Background = new SolidColorBrush(color);
         }
