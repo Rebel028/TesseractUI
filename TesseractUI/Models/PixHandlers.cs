@@ -26,7 +26,11 @@ namespace TesseractUI.Models
         
         public virtual Pix Handle(Pix request)
         {
-            return _nextHandler?.Handle(request);
+            if (_nextHandler!=null)
+            {
+               return _nextHandler.Handle(request);
+            }
+            return request;
         }
     }
 

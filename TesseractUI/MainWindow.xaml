@@ -40,16 +40,20 @@
             <Grid Grid.Row="2" Grid.Column="0" ColumnSpan="3" x:Name="TextGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition x:Name="ToolbarRow" Height="Auto"></RowDefinition>
-                    <RowDefinition x:Name="TextRow" Height="150"></RowDefinition>
+                    <RowDefinition x:Name="TextRow" Height="*" ></RowDefinition>
                 </Grid.RowDefinitions>
                 <ToolBar Grid.Row="0">
                     <Label>Mean confidence</Label>
                     <TextBlock x:Name="MeanConfidence" Width="30" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
                     <Separator />
                 </ToolBar>
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <TextBlock x:Name="DecodedText" TextWrapping="Wrap" Margin="20" VerticalAlignment="Stretch" Height="Auto"></TextBlock>
-                </ScrollViewer>
+                <DockPanel Grid.Row="1" LastChildFill="True">
+                    <TextBox DockPanel.Dock="Bottom" x:Name="DecodedText" TextWrapping="Wrap" Margin="20"
+                             VerticalAlignment="Stretch" 
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto" ></TextBox>
+                </DockPanel>
+                
             </Grid>
         </Grid>
         
@@ -62,15 +66,24 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto" ></RowDefinition>
             </Grid.RowDefinitions>
+            
             <StackPanel Grid.Row="0">
                 <Button x:Name="SelectButton" Click="SelectButton_OnClick" Margin="10,10,10,15" Height="50"
                         FontFamily="Arial Black" FontSize="18"
                         Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Select File</Button>
                 <TextBox x:Name="FileName" Margin="10" IsReadOnly="True"></TextBox>
             </StackPanel>
-            <Button Grid.Row="2"  Name="RecognizeButton" Click="RecognizeButton_OnClick" Margin="10,10,10,15" Height="50"
-                    FontFamily="Arial Black" FontSize="18"
-                    Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Recognize</Button>
+            
+            
+            <StackPanel Grid.Row="2">
+                <ComboBox x:Name="EngineModeCombobox" ItemsSource="{Binding Path = EngineModes}"
+                          SelectedValue="{Binding Path=SelectedEngineMode, UpdateSourceTrigger=PropertyChanged}"
+                          Validation.ErrorTemplate="{x:Null}"></ComboBox>
+                <Button Name="RecognizeButton" Click="RecognizeButton_OnClick" Margin="10,10,10,15" Height="50"
+                        FontFamily="Arial Black" FontSize="18"
+                        Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Recognize</Button>
+            </StackPanel>
+            
         </Grid>
     </Grid>
 </Window>

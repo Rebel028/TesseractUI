@@ -9,25 +9,14 @@ namespace TesseractUI
 {
     public static class TessEngineWrapper
     {
-        public const string RESULT_FILE_NAME = "temp.png";
-        
-        
-        public static IRecognitionResult ReadFile(Pix img, TesseractEngine engine)
+
+        public static IRecognitionResult ReadFile(Pix img ,TesseractEngine engine)
         {
             Stopwatch timer = new Stopwatch();
             timer.Start();
             
             try
             {
-                img = img.ConvertRGBToGray();
-                img = img.Deskew(out Scew skew);
-
-                if (File.Exists(RESULT_FILE_NAME))
-                {
-                    File.Delete(RESULT_FILE_NAME);
-                }
-                img.Save(RESULT_FILE_NAME, ImageFormat.Default);
-                
                 using (Page page = engine.Process(img))
                 {
                     string text = page.GetText();

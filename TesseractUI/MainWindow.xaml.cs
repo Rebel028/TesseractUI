@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Tesseract;
 using TesseractUI.Models;
-using Page =Tesseract.Page;
 using Path = System.IO.Path;
 
 namespace TesseractUI
@@ -18,14 +18,22 @@ namespace TesseractUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        public const string RESULT_FILE_NAME = "temp.png";
         public string FilePath { get; set; }
-        public string ResultPath = TessEngineWrapper.RESULT_FILE_NAME;
+        public Pix Pix { get; set; }
         
+        public EngineMode SelectedEngineMode { get; set; }
+        public IEnumerable<EngineMode> EngineModes
+        {
+            get { return Enum.GetValues(typeof(EngineMode)).Cast<EngineMode>(); }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
-            DecodedText.Text = "Естественно, желательно примерно представлять, какие языки могут встречаться в документе. Чем больше языков используется — тем дольше работает распознавание. " +
-                               "Иногда Tesseract некорректно обрабатывает случаи, когда текст на разных языках встречается рядом в одной строке. В таких случаях попробуйте ранее перечисленные способы по улучшению качества распознавания. Если не поможет, то попробуйте обходной путь — распознавайте отдельные слова на разных языках и в каждом случае выбирайте результат с большим значением confidence. Пример кода:";
+            
+            // DecodedText.Text = "Естественно, желательно примерно представлять, какие языки могут встречаться в документе. Чем больше языков используется — тем дольше работает распознавание. " +
+            //                    "Иногда Tesseract некорректно обрабатывает случаи, когда текст на разных языках встречается рядом в одной строке. В таких случаях попробуйте ранее перечисленные способы по улучшению качества распознавания. Если не поможет, то попробуйте обходной путь — распознавайте отдельные слова на разных языках и в каждом случае выбирайте результат с большим значением confidence. Пример кода:";
         }
 
         private void SelectButton_OnClick(object sender, RoutedEventArgs e)
@@ -39,8 +47,33 @@ namespace TesseractUI
                 this.FilePath = openFileDialog.FileName;
                 FileName.Text = this.FilePath;
                 MainImage.Source = BitmapFromUri(new Uri(this.FilePath));
+                
+                this.Pix = Pix.LoadFromFile(this.FilePath);
+                SetMainImageSize(this.Pix);
+                
                 ClearOldValues();
+
+                PreviewImage();
             }
+        }
+
+        /// <summary>
+        /// Create a prieview
+        /// </summary>
+        private void PreviewImage()
+        {
+            this.Pix = GetHandlers().Handle(this.Pix);
+            this.Pix.Save(RESULT_FILE_NAME, ImageFormat.Default);
+            ResultImage.Source = BitmapFromUri(new Uri(Path.GetFullPath(RESULT_FILE_NAME)));
+        }
+
+        private PixHandler GetHandlers()
+        {
+            DeskewHandler deskewHandler = new DeskewHandler();
+            GrayscaleHandler grayscaleHandler = new GrayscaleHandler();
+            deskewHandler.SetNext(grayscaleHandler);
+
+            return deskewHandler;
         }
 
         private void ClearOldValues()
@@ -49,9 +82,10 @@ namespace TesseractUI
             ClearMeanConfidence();
             DecodedText.Text = "";
             ResultImage.Source = null;
-            if (File.Exists(TessEngineWrapper.RESULT_FILE_NAME))
+            
+            if (File.Exists(RESULT_FILE_NAME))
             {
-                File.Delete(TessEngineWrapper.RESULT_FILE_NAME);
+                File.Delete(RESULT_FILE_NAME);
             }
         }
 
@@ -62,13 +96,10 @@ namespace TesseractUI
                 // Console.WriteLine(string.Join("\r\n", Directory.EnumerateFiles("./")));
                 using (TesseractEngine engine = new TesseractEngine(@"./tessdata", "rus", EngineMode.TesseractAndLstm))
                 {
-                    Pix pix = Pix.LoadFromFile(this.FilePath);
-                    SetMainImageSize(pix);
-                    IRecognitionResult result = TessEngineWrapper.ReadFile(pix, engine);
+                    IRecognitionResult result = TessEngineWrapper.ReadFile(this.Pix, engine);
 
                     SetMeanConfidence(result.MeanConfidence);
                     DecodedText.Text = result.Text;
-                    ResultImage.Source = BitmapFromUri(new Uri(Path.GetFullPath(TessEngineWrapper.RESULT_FILE_NAME)));
                 }
             }
         }
