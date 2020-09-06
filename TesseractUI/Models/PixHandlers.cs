@@ -180,5 +180,16 @@ namespace TesseractUI.Models
             return base.Handle(request);
         }
     }
+
+    public class RemoveLinesHandler : PixHandler
+    {
+        public string Name { get; } = "Remove Lines";
+        
+        public override Pix Handle(Pix request)
+        {
+            request = request?.RemoveLines();
+            return base.Handle(request);
+        }
+    }
     
 }
