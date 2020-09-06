@@ -12,6 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="ListViewDragDropManager" Version="1.2.0" />
       <PackageReference Include="Tesseract" Version="4.1.0-beta1" />
     </ItemGroup>
 

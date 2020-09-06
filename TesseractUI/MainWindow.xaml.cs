@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Tesseract;
 using TesseractUI.Models;
+using WPF.JoshSmith.ServiceProviders.UI;
 using Path = System.IO.Path;
 
 namespace TesseractUI
@@ -21,17 +22,20 @@ namespace TesseractUI
         public const string RESULT_FILE_NAME = "temp.png";
         public string FilePath { get; set; }
         public Pix Pix { get; set; }
-        
-        public EngineMode SelectedEngineMode { get; set; }
-        public IEnumerable<EngineMode> EngineModes
-        {
-            get { return Enum.GetValues(typeof(EngineMode)).Cast<EngineMode>(); }
-        }
+
+        public EngineMode SelectedEngineMode { get; set; } = EngineMode.Default;
+        public IEnumerable<EngineMode> EngineModes => Enum.GetValues(typeof(EngineMode)).Cast<EngineMode>();
+
+        private ListViewDragDropManager<PixHandler> _manager;
+
 
         public MainWindow()
         {
             InitializeComponent();
-            
+            _manager = new ListViewDragDropManager<PixHandler>(this.HandlersList);
+            EngineModeCombobox.ItemsSource = this.EngineModes;
+
+            // ReSharper disable CommentTypo
             // DecodedText.Text = "Естественно, желательно примерно представлять, какие языки могут встречаться в документе. Чем больше языков используется — тем дольше работает распознавание. " +
             //                    "Иногда Tesseract некорректно обрабатывает случаи, когда текст на разных языках встречается рядом в одной строке. В таких случаях попробуйте ранее перечисленные способы по улучшению качества распознавания. Если не поможет, то попробуйте обходной путь — распознавайте отдельные слова на разных языках и в каждом случае выбирайте результат с большим значением confidence. Пример кода:";
         }
@@ -58,7 +62,7 @@ namespace TesseractUI
         }
 
         /// <summary>
-        /// Create a prieview
+        /// Create a preview
         /// </summary>
         private void PreviewImage()
         {
@@ -71,7 +75,9 @@ namespace TesseractUI
         {
             DeskewHandler deskewHandler = new DeskewHandler();
             GrayscaleHandler grayscaleHandler = new GrayscaleHandler();
+            RemoveLinesHandler removeLinesHandler = new RemoveLinesHandler();
             deskewHandler.SetNext(grayscaleHandler);
+            grayscaleHandler.SetNext(removeLinesHandler);
 
             return deskewHandler;
         }
@@ -133,6 +139,10 @@ namespace TesseractUI
             bitmap.EndInit();
             return bitmap;
         }
-        
+
+        private void AddHandlerButton_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -74,10 +74,16 @@
                 <TextBox x:Name="FileName" Margin="10" IsReadOnly="True"></TextBox>
             </StackPanel>
             
+            <StackPanel Grid.Row="1">
+                <Button x:Name="AddHandlerButton" Click="AddHandlerButton_Click">+</Button>
+                <ListView x:Name="HandlersList">
+                    
+                </ListView>
+            </StackPanel>
             
             <StackPanel Grid.Row="2">
-                <ComboBox x:Name="EngineModeCombobox" ItemsSource="{Binding Path = EngineModes}"
-                          SelectedValue="{Binding Path=SelectedEngineMode, UpdateSourceTrigger=PropertyChanged}"
+                <ComboBox x:Name="EngineModeCombobox"
+                          SelectedItem="{Binding Path=SelectedEngineMode, UpdateSourceTrigger=PropertyChanged}"
                           Validation.ErrorTemplate="{x:Null}"></ComboBox>
                 <Button Name="RecognizeButton" Click="RecognizeButton_OnClick" Margin="10,10,10,15" Height="50"
                         FontFamily="Arial Black" FontSize="18"
