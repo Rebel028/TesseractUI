@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
@@ -28,13 +29,14 @@ namespace TesseractUI
 
         private ListViewDragDropManager<PixHandler> _manager;
 
+        public List<PixHandler> Handlers = new List<PixHandler>();
 
         public MainWindow()
         {
             InitializeComponent();
-            _manager = new ListViewDragDropManager<PixHandler>(this.HandlersList);
+            CreateDefaultHandlers();
+            _manager = new ListViewDragDropManager<PixHandler>(this.HandlersListView);
             EngineModeCombobox.ItemsSource = this.EngineModes;
-
             // ReSharper disable CommentTypo
             // DecodedText.Text = "Естественно, желательно примерно представлять, какие языки могут встречаться в документе. Чем больше языков используется — тем дольше работает распознавание. " +
             //                    "Иногда Tesseract некорректно обрабатывает случаи, когда текст на разных языках встречается рядом в одной строке. В таких случаях попробуйте ранее перечисленные способы по улучшению качества распознавания. Если не поможет, то попробуйте обходной путь — распознавайте отдельные слова на разных языках и в каждом случае выбирайте результат с большим значением confidence. Пример кода:";
@@ -66,20 +68,37 @@ namespace TesseractUI
         /// </summary>
         private void PreviewImage()
         {
-            this.Pix = GetHandlers().Handle(this.Pix);
+            this.Pix = GetHandlersChain().Handle(this.Pix);
             this.Pix.Save(RESULT_FILE_NAME, ImageFormat.Default);
             ResultImage.Source = BitmapFromUri(new Uri(Path.GetFullPath(RESULT_FILE_NAME)));
         }
 
-        private PixHandler GetHandlers()
+        private PixHandler GetHandlersChain()
         {
-            DeskewHandler deskewHandler = new DeskewHandler();
-            GrayscaleHandler grayscaleHandler = new GrayscaleHandler();
-            RemoveLinesHandler removeLinesHandler = new RemoveLinesHandler();
-            deskewHandler.SetNext(grayscaleHandler);
-            grayscaleHandler.SetNext(removeLinesHandler);
+            PixHandler handler = Handlers.Aggregate((cur, next) =>
+            {
+                cur.SetNext(next);
+                return next;
+            });
 
-            return deskewHandler;
+            // DeskewHandler deskewHandler = new DeskewHandler();
+            // GrayscaleHandler grayscaleHandler = new GrayscaleHandler();
+            // RemoveLinesHandler removeLinesHandler = new RemoveLinesHandler();
+            // deskewHandler.SetNext(grayscaleHandler);
+            // grayscaleHandler.SetNext(removeLinesHandler);
+            //
+            // return deskewHandler;
+            return handler;
+        }
+
+        private void CreateDefaultHandlers()
+        {
+            this.Handlers = new List<PixHandler>
+            {
+                new DeskewHandler(),
+                new GrayscaleHandler(),
+                //new RemoveLinesHandler(),
+            };
         }
 
         private void ClearOldValues()
@@ -141,6 +160,16 @@ namespace TesseractUI
         }
 
         private void AddHandlerButton_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void EditHandler_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void RemoveHandler_Click(object sender, RoutedEventArgs e)
         {
             throw new NotImplementedException();
         }

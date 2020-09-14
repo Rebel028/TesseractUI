@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesseractUI"
+        xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions"
+        xmlns:models="clr-namespace:TesseractUI.Models"
         mc:Ignorable="d"
         Title="Tesseract UI" Height="600" Width="1200"
         Icon="tesseract.ico">
@@ -62,29 +64,63 @@
         
         <Grid Name="ToolbarGrid" Column="2">
             <Grid.RowDefinitions>
-                <RowDefinition x:Name="SelectButtonRow" Height="*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition x:Name="SelectButtonRow" Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="Auto" ></RowDefinition>
             </Grid.RowDefinitions>
             
             <StackPanel Grid.Row="0">
-                <Button x:Name="SelectButton" Click="SelectButton_OnClick" Margin="10,10,10,15" Height="50"
+                <Button x:Name="SelectButton" Click="SelectButton_OnClick" 
+                        Margin="10,10,10,15" Height="50"
                         FontFamily="Arial Black" FontSize="18"
                         Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Select File</Button>
                 <TextBox x:Name="FileName" Margin="10" IsReadOnly="True"></TextBox>
             </StackPanel>
             
             <StackPanel Grid.Row="1">
-                <Button x:Name="AddHandlerButton" Click="AddHandlerButton_Click">+</Button>
-                <ListView x:Name="HandlersList">
-                    
+                <Button x:Name="AddHandlerButton" Click="AddHandlerButton_Click"
+                        Margin="10,10,10,15" Height="25" Width="25"
+                        FontFamily="Arial Black" FontSize="18"
+                        Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">+</Button>
+                <ListView x:Name="HandlersListView" ItemsSource="{DynamicResource ResourceKey=Handlers2}" Width="Auto" BorderBrush="Transparent">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Width="Auto">Name</GridViewColumn>
+                            <GridViewColumn Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Name="EditHandlerBtn"
+                                                Click="EditHandler_Click"
+                                                Content="Edit" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Name="RemoveHandlerBtn"
+                                                Click="RemoveHandler_Click"
+                                                Content="x" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.Resources><!--  ToDo -->
+                        <collections:ArrayList x:Key="Handlers2">
+                            <models:DeskewHandler></models:DeskewHandler>
+                            <models:GrayscaleHandler></models:GrayscaleHandler>
+                            <models:RemoveLinesHandler></models:RemoveLinesHandler>
+                        </collections:ArrayList>
+                    </ListView.Resources>
                 </ListView>
             </StackPanel>
             
             <StackPanel Grid.Row="2">
                 <ComboBox x:Name="EngineModeCombobox"
                           SelectedItem="{Binding Path=SelectedEngineMode, UpdateSourceTrigger=PropertyChanged}"
-                          Validation.ErrorTemplate="{x:Null}"></ComboBox>
+                          Validation.ErrorTemplate="{x:Null}">
+                </ComboBox>
                 <Button Name="RecognizeButton" Click="RecognizeButton_OnClick" Margin="10,10,10,15" Height="50"
                         FontFamily="Arial Black" FontSize="18"
                         Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Recognize</Button>
