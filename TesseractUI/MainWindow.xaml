@@ -14,7 +14,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition x:Name="ToolbarColumn" Width="200"></ColumnDefinition>
+            <ColumnDefinition x:Name="ToolbarColumn" Width="255"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
         
@@ -82,37 +82,26 @@
                         Margin="10,10,10,15" Height="25" Width="25"
                         FontFamily="Arial Black" FontSize="18"
                         Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">+</Button>
-                <ListView x:Name="HandlersListView" ItemsSource="{DynamicResource ResourceKey=Handlers2}" Width="Auto" BorderBrush="Transparent">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Width="Auto">Name</GridViewColumn>
-                            <GridViewColumn Width="Auto">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Name="EditHandlerBtn"
-                                                Click="EditHandler_Click"
-                                                Content="Edit" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Width="Auto">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Name="RemoveHandlerBtn"
-                                                Click="RemoveHandler_Click"
-                                                Content="x" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                    <ListView.Resources><!--  ToDo -->
-                        <collections:ArrayList x:Key="Handlers2">
-                            <models:DeskewHandler></models:DeskewHandler>
-                            <models:GrayscaleHandler></models:GrayscaleHandler>
-                            <models:RemoveLinesHandler></models:RemoveLinesHandler>
-                        </collections:ArrayList>
-                    </ListView.Resources>
+                <ListView x:Name="HandlersListView" Width="Auto" BorderBrush="Transparent">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Height="30">
+                                <Label Content="{Binding Path=Name}" Height="Auto" Width="150" MinWidth="100" FontFamily="Arial"/>
+                                <Button Name="EditHandlerBtn"
+                                        Click="EditHandler_Click"
+                                        Content="Edit"
+                                        Margin="5,0" Padding="5,0"
+                                        FontFamily="Arial Black" FontSize="14"
+                                        Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue"/>
+                                <Button Name="RemoveHandlerBtn"
+                                        Click="RemoveHandler_Click"
+                                        Content="x" 
+                                        Margin="5,0" Padding="5,0"
+                                        FontFamily="Arial Black" FontSize="18"
+                                        Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </StackPanel>
             

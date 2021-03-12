@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -27,16 +28,21 @@ namespace TesseractUI
         public EngineMode SelectedEngineMode { get; set; } = EngineMode.Default;
         public IEnumerable<EngineMode> EngineModes => Enum.GetValues(typeof(EngineMode)).Cast<EngineMode>();
 
-        private ListViewDragDropManager<PixHandler> _manager;
+        private ListViewDragDropManager<PixHandler> _listViewManager;
 
-        public List<PixHandler> Handlers = new List<PixHandler>();
+        private readonly PixHandlersManager _manager = new PixHandlersManager();
+
+        public List<PixHandler> Handlers => _manager.Handlers;
 
         public MainWindow()
         {
             InitializeComponent();
-            CreateDefaultHandlers();
-            _manager = new ListViewDragDropManager<PixHandler>(this.HandlersListView);
+            _listViewManager = new ListViewDragDropManager<PixHandler>(this.HandlersListView);
+            
             EngineModeCombobox.ItemsSource = this.EngineModes;
+            
+            HandlersListView.ItemsSource = this.Handlers;
+            
             // ReSharper disable CommentTypo
             // DecodedText.Text = "Естественно, желательно примерно представлять, какие языки могут встречаться в документе. Чем больше языков используется — тем дольше работает распознавание. " +
             //                    "Иногда Tesseract некорректно обрабатывает случаи, когда текст на разных языках встречается рядом в одной строке. В таких случаях попробуйте ранее перечисленные способы по улучшению качества распознавания. Если не поможет, то попробуйте обходной путь — распознавайте отдельные слова на разных языках и в каждом случае выбирайте результат с большим значением confidence. Пример кода:";
@@ -75,7 +81,7 @@ namespace TesseractUI
 
         private PixHandler GetHandlersChain()
         {
-            PixHandler handler = Handlers.Aggregate((cur, next) =>
+            PixHandler handler = this.Handlers.Aggregate((cur, next) =>
             {
                 cur.SetNext(next);
                 return next;
@@ -89,16 +95,6 @@ namespace TesseractUI
             //
             // return deskewHandler;
             return handler;
-        }
-
-        private void CreateDefaultHandlers()
-        {
-            this.Handlers = new List<PixHandler>
-            {
-                new DeskewHandler(),
-                new GrayscaleHandler(),
-                //new RemoveLinesHandler(),
-            };
         }
 
         private void ClearOldValues()
