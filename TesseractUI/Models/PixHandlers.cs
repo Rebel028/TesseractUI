@@ -13,6 +13,8 @@ namespace TesseractUI.Models
 
     public abstract class PixHandler : IHandler<Pix>
     {
+        public int Id { get; set; }
+        
         private IHandler<Pix> _nextHandler;
 
         public string Name { get; } = "DefaultHandler";
