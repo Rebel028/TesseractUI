@@ -1,11 +1,9 @@
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Windows.Media.Imaging;
 using Tesseract;
-using TesseractUI.Models;
+using TesseractWrappers.Models;
 
-namespace TesseractUI
+namespace TesseractWrappers
 {
     public static class TessEngineWrapper
     {

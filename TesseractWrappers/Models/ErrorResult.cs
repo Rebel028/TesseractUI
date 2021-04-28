@@ -1,6 +1,6 @@
 using System;
 
-namespace TesseractUI.Models
+namespace TesseractWrappers.Models
 {
     public class ErrorResult : IRecognitionResult
     {

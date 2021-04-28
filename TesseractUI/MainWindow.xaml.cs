@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Tesseract;
-using TesseractUI.Models;
+using TesseractWrappers;
+using TesseractWrappers.Models;
 using WPF.JoshSmith.ServiceProviders.UI;
 using Path = System.IO.Path;
 

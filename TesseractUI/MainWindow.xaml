@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesseractUI"
         xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions"
-        xmlns:models="clr-namespace:TesseractUI.Models"
         mc:Ignorable="d"
         Title="Tesseract UI" Height="600" Width="1200"
         Icon="tesseract.ico">

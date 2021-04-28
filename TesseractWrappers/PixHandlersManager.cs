@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using TesseractUI.Models;
+using TesseractWrappers.Models;
 
-namespace TesseractUI
+namespace TesseractWrappers
 {
     public class PixHandlersManager
     {
@@ -22,7 +22,7 @@ namespace TesseractUI
         {
             AddHandler(new DeskewHandler());
             AddHandler(new GrayscaleHandler());
-            AddHandler(new RemoveLinesHandler());
+            //AddHandler(new RemoveLinesHandler());
         }
 
         public void AddDefaultHandler<T>() where T: PixHandler

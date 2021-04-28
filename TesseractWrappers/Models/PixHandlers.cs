@@ -1,10 +1,10 @@
 using Tesseract;
 
-namespace TesseractUI.Models
+namespace TesseractWrappers.Models
 {
     public interface IHandler<T>
     {
-        public string Name { get; } 
+        string Name { get; } 
         
         IHandler<T> SetNext(IHandler<T> handler);
         
@@ -17,7 +17,7 @@ namespace TesseractUI.Models
         
         private IHandler<Pix> _nextHandler;
 
-        public string Name { get; } = "DefaultHandler";
+        public abstract string Name { get; }
 
         public IHandler<Pix> SetNext(IHandler<Pix> handler)
         {
@@ -38,8 +38,8 @@ namespace TesseractUI.Models
 
     public class GrayscaleHandler : PixHandler
     {
-        public string Name { get; } = "Convert To Grayscale";
-        
+        public override string Name => "Convert To Grayscale";
+
         public override Pix Handle(Pix request)
         {
             request = request?.ConvertRGBToGray();
@@ -49,8 +49,8 @@ namespace TesseractUI.Models
 
     public class DeskewHandler : PixHandler
     {
-        public string Name { get; } = "Deskew";
-        
+        public override string Name => "Deskew";
+
         public override Pix Handle(Pix request)
         {
             request = request?.Deskew();
@@ -60,8 +60,8 @@ namespace TesseractUI.Models
     
     public class DespeckleHandler : PixHandler
     {
-        public string Name { get; } = "Despeckle";
-        
+        public override string Name => "Despeckle";
+
         /// <summary>
         /// hit-miss sels in 2D layout; SEL_STR2 and SEL_STR3 are predefined values
         /// </summary>
@@ -93,7 +93,7 @@ namespace TesseractUI.Models
 
     public class ScaleHandler : PixHandler
     {
-        public string Name { get; } = "Scale Image";
+        public override string Name => "Scale Image";
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
         
@@ -112,7 +112,7 @@ namespace TesseractUI.Models
 
     public class BinarizeSauvolaHandler : PixHandler
     {
-        public string Name { get; set; } = "Binarize by Sauvola method";
+        public override string Name => "Binarize by Sauvola method";
 
         /// <summary>
         /// the window half-width for measuring local statistics
@@ -143,8 +143,8 @@ namespace TesseractUI.Models
 
     public class BinarizeOtsu : PixHandler
     {
-        public string Name { get; set; } = "Binarize by Otsu method";
-        
+        public override string Name => "Binarize by Otsu method";
+
         /// <summary>
         /// sizeX Desired tile X dimension; actual size may vary.
         /// </summary>
@@ -185,8 +185,8 @@ namespace TesseractUI.Models
 
     public class RemoveLinesHandler : PixHandler
     {
-        public string Name { get; } = "Remove Lines";
-        
+        public override string Name => "Remove Lines";
+
         public override Pix Handle(Pix request)
         {
             request = request?.RemoveLines();

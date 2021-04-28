@@ -1,4 +1,4 @@
-namespace TesseractUI.Models
+namespace TesseractWrappers.Models
 {
     public interface IRecognitionResult
     {
