@@ -114,7 +114,7 @@ namespace TesseractUI
             if (!string.IsNullOrEmpty(this.FilePath))
             {
                 // Console.WriteLine(string.Join("\r\n", Directory.EnumerateFiles("./")));
-                using (TesseractEngine engine = new TesseractEngine(@"./tessdata", "rus", EngineMode.TesseractAndLstm))
+                using (TesseractEngine engine = new TesseractEngine(@"./tessdata", "rus", this.SelectedEngineMode))
                 {
                     IRecognitionResult result = TessEngineWrapper.ReadFile(this.Pix, engine);
 
