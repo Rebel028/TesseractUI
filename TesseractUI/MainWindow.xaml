@@ -8,7 +8,9 @@
         mc:Ignorable="d"
         Title="Tesseract UI" Height="600" Width="1200"
         Icon="tesseract.ico">
-
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
     <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -29,12 +31,12 @@
                 <RowDefinition x:Name="TextGridRow" Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             
-            <Image Grid.Column="0" Grid.Row="0" x:Name="MainImage"></Image>
-            <TextBlock Grid.Column="0" Grid.Row="0" x:Name="MainImageSize"></TextBlock>
+            <Image Grid.Column="0" Grid.Row="0" x:Name="BaseImage" Source="{Binding BaseImage}"></Image>
+            <TextBlock Grid.Column="0" Grid.Row="0" x:Name="MainImageSize" Text="{Binding BaseImageSizeText}" ></TextBlock>
             <GridSplitter Grid.Column="1" Grid.Row="0"  ShowsPreview="False" Width="3"
                           HorizontalAlignment="Center" VerticalAlignment="Stretch"></GridSplitter>
-            <Image Grid.Column="2" Grid.Row="0" x:Name="ResultImage"></Image>
-            <TextBlock Grid.Column="2" Grid.Row="0">Test2</TextBlock>
+            <Image Grid.Column="2" Grid.Row="0" x:Name="ResultImage" Source="{Binding ResultImage}"></Image>
+            <TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding BaseImageSizeText}"></TextBlock> 
             <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Height="3"
                           HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             
@@ -45,14 +47,21 @@
                 </Grid.RowDefinitions>
                 <ToolBar Grid.Row="0">
                     <Label>Mean confidence</Label>
-                    <TextBlock x:Name="MeanConfidence" Width="30" VerticalAlignment="Center" TextAlignment="Center"></TextBlock>
+                    <TextBlock x:Name="MeanConfidence" 
+                               Width="30" 
+                               VerticalAlignment="Center" 
+                               TextAlignment="Center" 
+                               Text="{Binding MeanConfidence.TextValue}"
+                               Background="{Binding MeanConfidence.Background}"></TextBlock>
                     <Separator />
                 </ToolBar>
                 <DockPanel Grid.Row="1" LastChildFill="True">
-                    <TextBox DockPanel.Dock="Bottom" x:Name="DecodedText" TextWrapping="Wrap" Margin="20"
+                    <TextBox DockPanel.Dock="Bottom" x:Name="DecodedText" 
+                             TextWrapping="Wrap" Margin="20"
                              VerticalAlignment="Stretch" 
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                             ScrollViewer.VerticalScrollBarVisibility="Auto" ></TextBox>
+                             ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                             Text="{Binding DecodedText}"></TextBox>
                 </DockPanel>
                 
             </Grid>
@@ -73,7 +82,7 @@
                         Margin="10,10,10,15" Height="50"
                         FontFamily="Arial Black" FontSize="18"
                         Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">Select File</Button>
-                <TextBox x:Name="FileName" Margin="10" IsReadOnly="True"></TextBox>
+                <TextBox x:Name="FileName" Margin="10" IsReadOnly="True" Text="{Binding BaseImageFilePath}"></TextBox>
             </StackPanel>
             
             <StackPanel Grid.Row="1">
@@ -81,7 +90,7 @@
                         Margin="10,10,10,15" Height="25" Width="25"
                         FontFamily="Arial Black" FontSize="18"
                         Foreground="White" BorderBrush="LightSkyBlue" Background="LightSkyBlue">+</Button>
-                <ListView x:Name="HandlersListView" Width="Auto" BorderBrush="Transparent">
+                <ListView x:Name="HandlersListView" Width="Auto" BorderBrush="Transparent" ItemsSource="{Binding Handlers}" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Height="30">
@@ -106,6 +115,7 @@
             
             <StackPanel Grid.Row="2">
                 <ComboBox x:Name="EngineModeCombobox"
+                          ItemsSource="{Binding EngineModes}"
                           SelectedItem="{Binding Path=SelectedEngineMode, UpdateSourceTrigger=PropertyChanged}"
                           Validation.ErrorTemplate="{x:Null}">
                 </ComboBox>
