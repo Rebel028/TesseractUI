@@ -185,14 +185,7 @@ namespace TesseractUI
                 cur.SetNext(next);
                 return next;
             });
-
-            // DeskewHandler deskewHandler = new DeskewHandler();
-            // GrayscaleHandler grayscaleHandler = new GrayscaleHandler();
-            // RemoveLinesHandler removeLinesHandler = new RemoveLinesHandler();
-            // deskewHandler.SetNext(grayscaleHandler);
-            // grayscaleHandler.SetNext(removeLinesHandler);
-            //
-            // return deskewHandler;
+            
             return handler;
         }
     }

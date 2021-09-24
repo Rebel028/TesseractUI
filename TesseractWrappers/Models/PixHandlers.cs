@@ -4,10 +4,8 @@ namespace TesseractWrappers.Models
 {
     public interface IHandler<T>
     {
-        string Name { get; } 
-        
+        string Name { get; }
         IHandler<T> SetNext(IHandler<T> handler);
-        
         T Handle(T request);
     }
 
